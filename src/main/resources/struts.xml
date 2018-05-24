@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<!-- 修改默认的全局主题设置,默认的全局配置在org.apache.struts2包下的default.properties文件 -->
+	<!-- <constant name="struts.ui.theme" value="simple"></constant>  -->
+
+	<!-- 修改了当前struts的请求扩展名,默认是do和Null -->
+	<constant name="struts.action.extension" value="action,do,"></constant>
+	
+	<!-- 打开OGNL调用Java类的静态方法开关 -->
+	<constant name="struts.ognl.allowStaticMethodAccess" value="true"></constant>
+	
+	<!-- 国际化资源文件的配置 -->
+	<constant name="struts.custom.i18n.resources" value="i18n"></constant>
+
+    <package name="myTest" extends="struts-default">    	
+    	
+    	<!-- 重写某拦截器的属性值 ,参考/struts-2.3.28.1/docs/docs/interceptors.html该文档,
+    	这里采用方法3即改变全局的属性值-->
+    	<!-- 这里为修改 paramsPrepareParamsStack拦截器栈中的prepare的alwaysInvokePrepare属性值为false-->
+    	<interceptors>
+		    <interceptor-stack name="CRUDStack">
+		        <interceptor-ref name="paramsPrepareParamsStack">
+		            <param name="prepare.alwaysInvokePrepare">false</param>
+		        </interceptor-ref>
+		    </interceptor-stack>
+		</interceptors>
+		 
+		 <!-- 修改使用的拦截器栈 -->
+		<default-interceptor-ref name="CRUDStack"/>
+    	
+    	<!-- class默认值为struts-default的默认设置, method默认值为execute -->
+    	<action name="myStruts20" >
+    		<result>/first.jsp</result>
+    	</action>
+    	
+    	<action name="first" class="org.rone.study.struts2.myBean.Member" method="save">
+    		<exception-mapping result="MathError" exception="java.lang.ArithmeticException"></exception-mapping>
+    		<result name="MathError">/mathError.jsp</result>
+    		<result name="saveSuccess">/second.jsp</result>
+    	</action>
+    	
+    	<action name="testActionContext" class="org.rone.study.struts2.myAction.TestActionContext">
+    		<result>/testActionContext.jsp</result>
+    	</action>
+    	
+    	<action name="testAware" class="org.rone.study.struts2.myAction.TestAware">
+    		<result>/testActionContext.jsp</result>
+    	</action>
+    	
+    	<action name="goLogin">
+    		<result>/login.jsp</result>
+    	</action>
+    	
+    	<action name="login" class="org.rone.study.struts2.myAction.LoginAndLogout" method="login">
+    		<result name="login-success">/login-success.jsp</result>
+    	</action>
+    	
+    	<action name="logout" class="org.rone.study.struts2.myAction.LoginAndLogout" method="logout">
+    		<result name="logout-success">/login.jsp</result>
+    	</action>
+    	
+    	<action name="testResult">
+    		<!--  
+    		<result type="chain">
+    			<param name="actionName">myStruts20</param> 
+    			<param name="namespace">/</param>
+    		</result>
+    		-->
+    		
+    		<!-- 
+    		<result type="redirectAction">
+    			<param name="actionName">myStruts20</param> 
+    			<param name="namespace">/</param>
+    		</result>
+    		 -->
+    		
+    		<result type="redirect">myStruts20</result>
+    		
+    	</action>
+    	
+    	<!-- 若struts找到带通配符的匹配结果不止一个，则按先后顺序匹配  -->
+    	<action name="*-first1-first" class="org.rone.study.struts2.myAction.TestWildcard" method="first1">
+    		<result>/index.jsp</result>
+    	</action>
+    	
+    	<action name="my-*-*" class="org.rone.study.struts2.myAction.TestWildcard" method="{1}">
+    		<result>/{2}.jsp</result>
+    	</action>
+    	
+    	<action name="testMy" class="org.rone.study.struts2.myAction.TestMy">
+    		<result>/testMy.jsp</result>
+    	</action>
+    	
+    	<action name="form_tag" class="org.rone.study.struts2.myAction.Form_tag" method="execute">
+    		<result name="success">/form-tag-2.jsp</result>
+    	</action>
+    	
+    	<!-- CRUD -->
+    	<action name="CRUD-*" class="org.rone.study.struts2.myAction.EmployeeAction" method="{1}">
+    		<result name="{1}">/CRUD-{1}.jsp</result>
+    		<result name="success" type="redirectAction">CRUD-show</result>
+    	</action>
+    	
+    	<!-- typeConversion -->
+    	<action name="typeConversion" class="org.rone.study.struts2.typeConversion.TypeConversion">
+    		<result>/conversionSuccess.jsp</result>
+    		<result name="input">/typeConversion.jsp</result>
+    	</action>
+    	
+    	<!-- CollectionConversion -->
+    	<action name="CollectionConversion" class="org.rone.study.struts2.typeConversion.CollectionConversionAction">
+    		<result>/conversionSuccess.jsp</result>
+    	</action>
+    	
+    	<!-- 国际化 -->
+    	<action name="testI18n" class="org.rone.study.struts2.myAction.TestI18nAction">
+    		<result>/i18n.jsp</result>
+    	</action>
+    	
+    	<!-- validator验证器 -->
+    	<action name="testValidator" class="org.rone.study.struts2.validator.TestValidatorAction">
+    		<result>/TestValidator/success.jsp</result>
+    		<result name="input">/TestValidator/testValidator.jsp</result>
+    	</action>
+    	<action name="testValidator2" class="org.rone.study.struts2.validator.TestValidatorAction">
+    		<result>/TestValidator/success.jsp</result>
+    		<result name="input">/TestValidator/testValidator.jsp</result>
+    	</action>
+    	
+    </package>
+
+</struts>
